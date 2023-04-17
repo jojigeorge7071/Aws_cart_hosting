@@ -18,34 +18,33 @@ var adminRouter = require('./routes/admin');
 var app = express();
 
 
+var favicon = require('serve-favicon')
+app.use(favicon(path.join(__dirname, 'public','images','favicon.ico')))
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 // app.engine('hbs', hbs.engine({ extname: 'hbs', defaultLayout: 'layouts', layoutDir: __dirname + '/views/layouts', partialDir: __dirname + '/views/partials' }))
 app.engine('hbs', hbs.engine({
   extname: 'hbs',
   defaultLayout: 'layouts',
-  layoutDir: __dirname + '/ views/ layouts/',
+  layoutDir: __dirname + '/views/layouts',
   partialsDir: __dirname + '/views/partials'
 }));
 app.set('view engine', 'hbs');
 app.use(fileUpload())
-db.connect((err)=>{//connect to database
-  if(err)
-  console.log('connection error'+err)
-  else
-  console.log('connection established')
-})
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 
-app.use(session({secret:'jojikey',cookie:{maxAge:300000}}))
+
+app.use(session({secret:'jojikey',resave :false,saveUninitialized: true,cookie:{maxAge:300000}}))
 
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 
 

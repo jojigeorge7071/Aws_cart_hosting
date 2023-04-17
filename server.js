@@ -3,16 +3,36 @@
 /**
  * Module dependencies.
  */
-
-var app = require("../app");
+require("dotenv").config();
+var db = require("./config/connection");
+var favicon = require('serve-favicon')
+var app = require("./app");
 var debug = require("debug")("shopping-cart:server");
 var http = require("http");
 
-/**
- * Get port from environment and store in Express.
- */
+
+
+var express = require('express')
+// var favicon = require('serve-favicon')
+// var path = require('path')
+
+// var app = express()
+// app.use(favicon(path.join(__dirname, 'public','images','favicon.ico')))
 
 var port = normalizePort(process.env.PORT || "3000");
+
+db.connect((err) => {
+	//connect to database
+	if (err) console.log("connection error" + err);
+	else {
+		server.listen(port, () => {
+			// console.log("listening for requests");
+			console.log(`connection established at port ${port}`);
+		});
+	}
+});
+
+
 app.set("port", port);
 // console.log("environment variable:", process.env.MONGO_URL);
 /**
@@ -24,8 +44,8 @@ var server = http.createServer(app);
 /**
  * Listen on provided port, on all network interfaces.
  */
-
-server.listen(port);
+// console.log("creating port....");
+// server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
 
