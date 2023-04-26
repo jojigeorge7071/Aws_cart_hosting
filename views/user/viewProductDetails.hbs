@@ -61,6 +61,7 @@
                                     <form action="/view-product-details" method="post">
                                         <div class="mt-2">
                                             <input name="prodId" type="hidden"value='{{ product._id }}'class="prod_id">
+                                            <input name="adminId" type="hidden"value='{{ product.adminId }}'class="">
                                             {{#if product.available }}
                                                 <div class="">
                                                     <label for="Quantity">Quantity</label>

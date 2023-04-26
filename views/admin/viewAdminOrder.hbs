@@ -37,7 +37,7 @@
                             </div>
                             <br>
                             <div class="col-md-12 mt-2 justify-content-center ">
-                                <label >Payment status      :<span id="status_id">{{details.status}}</span></label>
+                                {{!-- <label >Payment status      :<span id="status_id">{{details.status}}</span></label> --}}
                                 <input type="text" disabled   class="form-control"  name='pincode'  placeholder="Payment Method      :     {{details.paymentMethod}}">
                                 {{!-- <input type="text" disabled   class="form-control"  name='pincode'  placeholder="Payment status         :    " <span id="carttotal">{{details.status}}</span>> --}}
                                 <input type="text" disabled   class="form-control"  name='pincode'  placeholder="Date of Order            :     {{details.date}}">
@@ -67,25 +67,25 @@
                                     {{#each orderItems}}
                                     <tr>
                                         <td>
-                                            <img src="/product-image/{{this.product._id}}.jpg" height="70px" width="70px" alt="pimage">
+                                            <img src="/product-image/{{this._id}}.jpg" height="70px" width="70px" alt="pimage">
 
                                         </td>
-                                        <td><h6>{{this.product.title}}</h6></td>
-                                        <td><h6>Rs:{{this.product.price}}/-</h6></td>
-                                        <td>{{this.quantity}}</td>
+                                        <td><h6>{{this.title}}</h6></td>
+                                        <td><h6>Rs:{{this.price}}/-</h6></td>
+                                        <td>{{this.qtyOrder}}</td>
 
                                     </tr>
                                     {{/each}}
                                 </tbody>
                             </table>
-                            <hr>
+                            {{!-- <hr>
                             <div class="container">
                                 <h6 class="font-weight-bold">Grand Total
                                     <span class="float-end font-weight-bold">RS:{{details.totalPrice}}/-</span>
                                 </h6>
                                 <hr>
-                            </div>
-                            <button class="mt-2 btn btn-primary  w-100"onclick="shipped('{{details._id}}')">Shipped </button>
+                            </div> --}}
+                            {{!-- <button class="mt-2 btn btn-primary  w-100"onclick="shipped('{{details._id}}')">Shipped </button> --}}
                             <a href="/admin"class="mt-2 btn btn-success  w-100">Back </a>
                         {{else}}   
                             <h4>Your cart is empty</h4>

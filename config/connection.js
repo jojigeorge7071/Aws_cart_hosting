@@ -7,7 +7,8 @@ module.exports.connect = function (done) {
 	// console.log(process.env.MONGO_URL+'MONGO_URL');
 	// const url ='mongodb://localhost:27017'
 	// const url = process.env.MONGO_URL;
-	const dbname = "shopping";
+	const dbname = "Homeshoppy";
+	// const dbname = "shopping";
     // console.log('connection to db started...');
 	mongoClient.connect(url, (err, data) => {
 		if (err) return done(err);

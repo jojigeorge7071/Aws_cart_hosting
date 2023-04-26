@@ -27,7 +27,7 @@ router.get('/', async function (req, res, next) {
   if (req.session.user) {
     cartCount = await userHelpers.getCartCount(req.session.user._id,)
   }
-  productHelper.getAllCategories().then((cat) => {
+  userHelpers.getAllCategories().then((cat) => {
     res.render('user/view-categories', { cat, user, cartCount })
   })
   // productHelper.getAllProducts().then((products)=>{
@@ -67,7 +67,7 @@ router.get('/view-product-details/:prodId', async (req, res) => {
 // })
 router.post('/view-product-details', verifyLogin, async (req, res) => {
   // console.log('request . body  in post view product details----------------------------------------------',req.body);
-  await userHelpers.updateStock(req.body.prodId, req.body.quantity).then((response) => {
+  await userHelpers.updateStock(req.body.prodId, req.body.quantity)
     // console.log('return value in post view product details----------------00',response);
     if (response.status == '') {
       console.log('Only limited quantity is available')
@@ -75,20 +75,30 @@ router.post('/view-product-details', verifyLogin, async (req, res) => {
 
 
     } else if (response.status === 'false') {
-      userHelpers.addToCartQty(req.body, req.session.user._id)
+      await userHelpers.addToCartQty(req.body, req.session.user._id)
       console.log('qantity is now out of stock')
-      res.redirect('/cart')
+      let cartItems = null
+      cartItems = await userHelpers.getCartProducts(req.session.user._id)
+      let total = null
+      if(cartItems!=''){
+        total = await userHelpers.getCartTotal(req.session.user._id)
+      }
+      res.render('user/cart', { cartItems, user: req.session.user, total })
 
 
 
     } else {
       // location. reload()
-      userHelpers.addToCartQty(req.body, req.session.user._id)
+      await userHelpers.addToCartQty(req.body, req.session.user._id)
       console.log(' quantity is available')
-      res.redirect('/cart')
-
+      let cartItems = null
+      cartItems = await userHelpers.getCartProducts(req.session.user._id)
+      let total = null
+      if(cartItems!=''){
+        total = await userHelpers.getCartTotal(req.session.user._id)
+      }
+      res.render('user/cart', { cartItems, user: req.session.user, total })
     }
-  })
 })
 
 router.post('/verfiy-payment', (req, res) => {
@@ -144,7 +154,7 @@ router.post('/login', (req, res) => {
 })
 router.get('/logout', (req, res) => {
   req.session.user=null 
-  req.session.loggedIn=false
+  req.session.userloggedIn=false
   res.redirect('/')
 })
 router.get('/placeorder', verifyLogin, async (req, res) => {
@@ -186,7 +196,9 @@ router.get('/ajax-add-to-cart/:id', async (req, res) => {
   if (req.session.user) {
     var response = await userHelpers.minusFromStock(req.params.id)
     if (response.updated) {
-      await userHelpers.addToCart(req.params.id, req.session.user._id)
+      let productDetails=await userHelpers.selectedProductDetails(req.params.id)
+      // console.log('ajax-add-to-cart /productdetails',productDetails);
+      await userHelpers.addToCart(productDetails, req.session.user._id)
       cartCount = await userHelpers.getCartCount(req.session.user._id,)
       res.json({ count: cartCount, stockFlag: response.available })
     } else {
@@ -199,7 +211,7 @@ router.get('/ajax-add-to-cart/:id', async (req, res) => {
   
 })
 router.get('/ajax-minus-from-cart/:id', async(req, res) => {
-    await userHelpers.minusFromCart(req.params.id, req.session.user._id).then(async () => {
+    await userHelpers.minusFromCart(req.params.id, req.session.user._id)
         userHelpers.updateAvailableStatus(req.params.id)
         // console.log(req.session.user._id)
         // let cartItems =await userHelpers.getCartProducts(req.session.user._id)
@@ -209,14 +221,16 @@ router.get('/ajax-minus-from-cart/:id', async(req, res) => {
         changedItem = await userHelpers.getCartProductCount(req.session.user._id, req.params.id)
         // console.log(changedItem[0].quantity);
         res.json({ item: changedItem[0].item, quantity: changedItem[0].quantity, total: total })
-    })
+   
 })
 router.get('/ajax-plus-from-cart/:id', async (req, res) => {
 
 //   console.log('re=======================================',req.params);
   var response = await userHelpers.minusFromStock(req.params.id)
   if (response.updated) {
-    userHelpers.addToCart(req.params.id, req.session.user._id).then(async () => {
+    let productDetails=await userHelpers.selectedProductDetails(req.params.id)
+
+    userHelpers.addToCart(productDetails, req.session.user._id).then(async () => {
       // console.log(req.session.user._id)
       // let cartItems =await userHelpers.getCartProducts(req.session.user._id)
       // console.log(cartItems);
@@ -235,7 +249,7 @@ router.get('/ajax-plus-from-cart/:id', async (req, res) => {
 
 })
 router.post('/ajax-remove-from-cart', (req, res, next) => {
-    console.log('request remove from cart',req.body);
+    // console.log('request remove from cart',req.body);
   userHelpers.removeFromCart(req.body).then((response) => {
     userHelpers.updateAvailableStatus(req.body.product)
     res.json(response)

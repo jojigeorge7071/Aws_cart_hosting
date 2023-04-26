@@ -12,7 +12,10 @@ function addToCart(prodId){
         success:(response)=>{
             let count = response.count
             if(response.stockFlag){
-                $('#cartId').html(count)
+                // location. reload()
+
+                document.getElementById('cartId').innerHTML=count
+                // $('#cartId').html(count)
             }
             else if(response.notlogin){
                 alert('Please Login')

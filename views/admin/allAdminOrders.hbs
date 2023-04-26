@@ -9,13 +9,13 @@
                                 <div class="display-6 text-center p-2 mb-2 ">Order Details</div>
                             </div>
                             <div class="container">
-                                <table class=" table m-3">
+                                <table class=" table ">
             <thead>
                 <tr>
                     <th scope="col">Date</th>
                     <th scope="col">Order Id</th>
                     <th scope="col">Payment Method</th>
-                    <th scope="col">Total</th>
+                    {{!-- <th scope="col">Total</th> --}}
                     <th scope="col">Status</th>
 
                     <th scope="col">Action</th>
@@ -24,13 +24,13 @@
             {{#each order}}
             <tbody>
                 <tr>
-                    <th scope="row">{{this.date}}</th>
-                    <td>{{this._id}}</td>
-                    <td>{{this.paymentMethod}}</td>
-                    <td>{{this.totalPrice}}/-</td>
-                    <td>{{this.status}}</td>
+                    <th scope="row">{{this.address.date}}</th>
+                    <td>{{this.address._id}}</td>
+                    <td>{{this.address.paymentMethod}}</td>
+                    {{!-- <td>{{this.address.totalPrice}}/-</td> --}}
+                    <td>{{this.address.status}}</td>
                     <td>
-                        <a class="btn btn-primary" href="/admin/viewAdminOrder/{{this._id}}">View Details</a>
+                        <a class="btn btn-primary" href="/admin/viewAdminOrder?orderId={{this.address._id}}&userId={{this.address.userId}}">View Details</a>
                     </td>
                 </tr>
 

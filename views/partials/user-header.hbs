@@ -17,11 +17,13 @@
                 </div>
                 <div class=" collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
+                        <a type="a" class="btn btn-secondary" data-bs-toggle="tooltip" href="/admin" data-bs-placement="bottom" title="Go to Admin"></a>
+                        {{!-- <li class="nav-item">
                             <a class="nav-link active " aria-current="page" href="/admin">
                                 User header
                             </a>
-                        </li>
+                            
+                        </li> --}}
                         <li class="nav-item">
                             <a class="nav-link active" href="/order">
                                 Order
@@ -30,8 +32,8 @@
                         <li class="nav-item">
                             <a class="nav-link active" href="/cart">
                                 Cart
-                                {{#if cartCount}}
                                     <span class="badge bg-dark" id="cartId">{{cartCount}}</span>
+                                {{#if cartCount}}
                                 {{/if}}
                                 
                             </a>

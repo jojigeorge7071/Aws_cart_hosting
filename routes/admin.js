@@ -19,16 +19,30 @@ router.get('/shipped/:id',verifyLogin, async (req, res) => {
       res.json({ shippedFlag:true})
     })
 
-router.get('/viewAdminOrder/:orderId',verifyLogin, async (req, res) => {
-    let orderItems = await productHelpers.getProductAdminDetails(req.params.orderId)
-    details=orderItems[0]
-    res.render('admin/viewAdminOrder', {admin:req.session.admin, orderItems,details})
+// router.get('/viewAdminOrder/:orderId',verifyLogin, async (req, res) => {
+//     let orderItems = await productHelpers.getProductAdminDetails(req.params.orderId)
+//     details=orderItems[0]
+//     // console.log('admin order table list',details);
+//     res.render('admin/viewAdminOrder', {admin:req.session.admin, orderItems,details})
   
+//   })
+router.get('/viewAdminOrder/',verifyLogin, async (req, res) => {
+    let sellerId = req.session.admin._id
+    let orderId = req.query.orderId
+    // console.log('parameter passed',sellerId,orderId)
+        let orderItems = await productHelpers.getProductAdminDetails(orderId,sellerId)
+        let details= await productHelpers.getAddress(orderId)
+        // details=orderItems[0]
+        // console.log('admin router/viewAdminOrder',orderItems.orderItems);
+        // console.log('admin router/viewAdminOrder',orderItems.products[0]);
+        // console.log('admin order table list',details[0]);
+        res.render('admin/viewAdminOrder', {admin:req.session.admin,orderItems:orderItems.orderItems,details:details[0]})
   })
 
-router.get('/orderAdmin',verifyLogin, async (req, res) => { 
-    let order = await productHelpers.getOrderList()
-    res.render('admin/orderAdmin', { order ,admin:req.session.admin})
+router.get('/allAdminOrders',verifyLogin, async (req, res) => { 
+    let order = await productHelpers.getOrderList(req.session.admin._id)
+    // console.log("address:",order[0])
+    res.render('admin/allAdminOrders', { order,admin:req.session.admin})
   })
 router.get('/adminSignup', (req, res) => {
     res.render('admin/adminSignup', { admin: req.session.admin })
@@ -60,7 +74,7 @@ router.post('/adminLogin', (req, res) => {
         if (response.status) {
             req.session.admin = response.admin
             req.session.adminloggedIn = true
-            console.log('session', req.session)
+            // console.log('session', req.session)
             res.redirect('/admin')
         } else {
             // req.session.loginErr = 'Username or Password is wrong'
@@ -71,10 +85,11 @@ router.post('/adminLogin', (req, res) => {
 
 router.get('/',verifyLogin, async (req, res) => {
     let adminSes = req.session.admin
+    // console.log('admin value session',adminSes._id);
     // adminSes.admin=true
-    console.log('in admin router /',req.session);
-    let products = await productHelpers.getAllProducts()
-    let category = await productHelpers.getAllCategories()
+    // console.log('in admin router /',req.session);
+    let products = await productHelpers.getAllProducts(adminSes._id)
+    let category = await productHelpers.getAllCategories(adminSes._id)
     if (adminSes) {
         res.render('admin/viewProducts', {  products, category,admin:req.session.admin })
 
@@ -92,7 +107,9 @@ router.get('/',verifyLogin, async (req, res) => {
 
 
 router.get('/add-product',verifyLogin, async (req, res) => {
-    let allCategory = await productHelpers.getAllCategory()
+    let adminId=req.session.admin._id
+    // console.log('adminId',adminId);
+    let allCategory = await productHelpers.getAllCategory(adminId)
     res.render('admin/add-product', { allCategory, admin: req.session.admin })
 
 })
